@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<title>Tissue Demo</title>
+<style>
+  body {
+    font-family: 'Helvetica Neue', Helvetica, sans-serif;
+    line-height: 1.2em;
+  }
+
+  .col {
+    float: left;
+    padding-right: 24px;
+    width: 400px;
+  }
+
+  .should,
+  .tissue {
+    color: white;
+    background-color: #a8a8a8;
+    border-radius: 3px;
+    padding: 0.2em;
+    white-space: nowrap;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .should:link,
+  .should:visited,
+  .should:hover,
+  .should:active,
+  .tissue:link,
+  .tissue:visited,
+  .tissue:hover,
+  .tissue:active {
+    text-decoration: none;
+  }
+
+  .should-open,
+  .tissue-open {
+    background: #6cc644;
+  }
+
+  .should-closed,
+  .tissue-closed {
+    background-color: #bd2c00;
+  }
+  
+  .should-err {
+    background-color: #fc8c13;
+  }
+</style>
+
+<h1>Tissue</h1>
+<h2>Track your issues and try not to cry</h2>
+<section class="col">
+  <h3>Should</h3>
+  <p>
+    This is the sort of look I'm ultimately going for. It should
+    <a href="http://github.com/stenington/tissue/issues/1" 
+       title="stenington/tissue#1: Open" 
+       class="should should-open">show up like this</a> 
+    for open ones and 
+    <a href="http://github.com/stenington/tissue/issues/2" 
+       title="stenington/tissue#2: Closed" 
+       class="should should-closed">like this</a> 
+    for closed.
+  </p>
+  <p>
+    Before the status check completes, mentions should look
+    <a href="http://github.com/stenington/tissue/issues/1" 
+       title="Checking stenington/tissue#1..." 
+       class="should">like this</a>.
+    And a reference to a non-existent issue 
+    (and maybe other problems?) should look 
+    <a href="#" 
+       title="stenington/tissue#9375: Issue does not exist!" 
+       class="should should-err">like so</a>.
+  </p>
+</section>
+
+<section class="col">
+  <h3>Does</h3>
+  <p>
+    This is the sort of look I'm ultimately going for. It should
+    <a rel="issue" 
+       href="http://github.com/stenington/tissue/issues/1">show up like this</a> 
+    for open ones and 
+    <a rel="issue" 
+       href="http://github.com/stenington/tissue/issues/2">like this</a> 
+    for closed.
+  </p>
+  <p>
+    Before the status check completes, mentions should look
+    <a rel="issue"
+       href="http://github.com/stenington/tissue/issues/1">like this</a>.
+    And a reference to a non-existent issue 
+    (and maybe other problems?) should look 
+    <a rel="issue" 
+       href="#">like so</a>.
+  </p>
+</section>
+
+<script src="jquery-1.7.2.min.js"></script>
+<script>
+$(function(){
+  
+  var ghIssueUrl = /github.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)$/;
+  $('[rel~="issue"]').each(function(i, el){
+    var parts = ghIssueUrl.exec($(el).attr('href'));
+    if (parts && parts.length == 4) {
+      var user = parts[1];
+      var project = parts[2];
+      var issueNum = parts[3];
+      var issueId = user + '/' + project + '#' + issueNum;
+      $(el).addClass('tissue').attr('title', 'Checking ' + issueId + '...');
+      $.ajax({
+        url: 'https://api.github.com/repos/' + user + '/' + project + '/issues/' + issueNum,
+        error: function(xhr, textStatus, err){
+          console.log(textStatus, err);
+        },
+        success: function(data, textStatus, xhr){
+          if (data.state === 'open'){
+            $(el).addClass('tissue-open').attr('title', issueId + ': Open');
+          }
+          else {
+            $(el).addClass('tissue-closed').attr('title', issueId + ': Closed');
+          }
+        }
+      });
+    }
+  });
+
+});
+</script>
