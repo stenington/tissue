@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jquery-1.7.2.min.js"></script>
+  <link rel="stylesheet" href="qunit.css" type="text/css" media="screen" />
+  <script src="qunit.js"></script>
+  <script src="../tissue.js"></script>
+
+  <script>
+
+function tissueTest(spec){
+  asyncTest("Handles " + spec.url, function() {
+    var issue = $('<a>Foo</a>').attr('href', spec.url).appendTo($('#qunit-fixture'));
+    $(issue).trackIssue().always(function(){
+      /* once the ajax call is done... */
+      if (spec.expectClass) {
+        spec.expectClass.forEach(function(val, i, arr){
+          ok($(issue).hasClass(val), 'has class "' + val + '"');
+        });
+      }
+      if (spec.expectSkip) {
+        ['tissue', 'tissue-open', 'tissue-closed', 'tissue-err'].forEach(function(val, i, arr){
+          ok(!$(issue).hasClass(val), 'no class "' + val + '"');
+        });
+      }
+      equal($(issue).attr('title'), spec.expectTitle, 'Titled "' + spec.expectTitle + '"');
+      start();
+    });
+    /* while the ajax is going... (not sure about the timing here) */
+    if (spec.expectSkip) {
+      ok(!$(issue).hasClass('tissue'), 'not marked as tissue');
+    }
+    else {
+      ok($(issue).hasClass('tissue'), 'marked as tissue while waiting');
+      equal($(issue).attr('title'), spec.expectWaitTitle, 'has waiting title');
+    }
+  });
+}
+
+$(document).ready(function(){
+
+  test("rel=issue links autorun", function(){
+    $('#autorun .should').each(function(){
+      ok($(this).hasClass('tissue'), 'marked');
+    });
+    $('#autorun .not').each(function(){
+      ok(!$(this).hasClass('tissue'), 'not marked');
+    });
+  });
+
+  tissueTest({
+    url: "http://github.com/stenington/tissue/issues/1",
+    expectClass: ['tissue', 'tissue-open'],
+    expectTitle: "stenington/tissue#1: Open",
+    expectWaitTitle: "Checking stenington/tissue#1..."
+  });
+  
+  tissueTest({
+    url: "http://github.com/stenington/tissue/issues/2",
+    expectClass: ['tissue', 'tissue-closed'],
+    expectTitle: "stenington/tissue#2: Closed",
+    expectWaitTitle: "Checking stenington/tissue#2..."
+  });
+
+  tissueTest({
+    url: "http://not-even-github.com/foo/bar/issues/1",
+    expectSkip: true,
+    expectTitle: undefined
+  });
+
+  tissueTest({
+    url: "http://github.com/stenington/not-a-project/issues/1",
+    expectClass: ['tissue', 'tissue-err'],
+    expectTitle: "stenington/not-a-project#1: Not Found",
+    expectWaitTitle: "Checking stenington/not-a-project#1..."
+  });
+
+  tissueTest({
+    url: "http://github.com/stenington/tissue/issues/99999999",
+    expectClass: ['tissue', 'tissue-err'],
+    expectTitle: "stenington/tissue#99999999: Not Found",
+    expectWaitTitle: "Checking stenington/tissue#99999999..."
+  });
+
+});
+  </script>
+  
+</head>
+<body>
+  <h1 id="qunit-header">QUnit example</h1>
+  <h2 id="qunit-banner"></h2>
+  <div id="qunit-testrunner-toolbar"></div>
+  <h2 id="qunit-userAgent"></h2>
+  <ol id="qunit-tests"></ol>
+  <div id="qunit-fixture">
+    <div id="autorun">
+      <a class="should" rel="issue" href="http://github.com/stenington/tissue/issues/1">Should get marked</a>
+      <a class="not" href="http://github.com/stenington/tissue/issues/1">Should get marked</a>
+    </div>
+  </div>
+</body>
+</html>

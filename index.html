@@ -44,7 +44,8 @@
     background-color: #bd2c00;
   }
   
-  .should-err {
+  .should-err,
+  .tissue-err {
     background-color: #fc8c13;
   }
 </style>
@@ -90,44 +91,23 @@
   </p>
   <p>
     Before the status check completes, mentions should look
-    <a rel="issue"
+    <a id="waiter"
        href="http://github.com/stenington/tissue/issues/1">like this</a>.
     And a reference to a non-existent issue 
     (and maybe other problems?) should look 
     <a rel="issue" 
-       href="#">like so</a>.
+       href="http://github.com/stenington/tissue/issues/99999999">like so</a>.
   </p>
 </section>
 
 <script src="jquery-1.7.2.min.js"></script>
+<script src="tissue.js"></script>
 <script>
 $(function(){
-  
-  var ghIssueUrl = /github.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)$/;
-  $('[rel~="issue"]').each(function(i, el){
-    var parts = ghIssueUrl.exec($(el).attr('href'));
-    if (parts && parts.length == 4) {
-      var user = parts[1];
-      var project = parts[2];
-      var issueNum = parts[3];
-      var issueId = user + '/' + project + '#' + issueNum;
-      $(el).addClass('tissue').attr('title', 'Checking ' + issueId + '...');
-      $.ajax({
-        url: 'https://api.github.com/repos/' + user + '/' + project + '/issues/' + issueNum,
-        error: function(xhr, textStatus, err){
-          console.log(textStatus, err);
-        },
-        success: function(data, textStatus, xhr){
-          if (data.state === 'open'){
-            $(el).addClass('tissue-open').attr('title', issueId + ': Open');
-          }
-          else {
-            $(el).addClass('tissue-closed').attr('title', issueId + ': Closed');
-          }
-        }
-      });
-    }
-  });
-
-});
+  $.ajax = function(spec){
+    var d = $.Deferred();
+    return d;
+  };
+  $('#waiter').trackIssue();
+})
 </script>
