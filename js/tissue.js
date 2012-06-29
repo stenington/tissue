@@ -1,4 +1,4 @@
-var ghIssueUrl = /https?:\/\/(?:www\.)?github\.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)$/;
+var ghIssueUrl = /(?:https?:)?\/\/(?:www\.)?github\.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)$/;
 
 $.fn.extend({
   trackIssue: function(){

@@ -62,6 +62,20 @@ $(document).ready(function(){
     expectWaitTitle: "Checking stenington/tissue#2..."
   });
 
+ tissueTest({
+    url: "https://github.com/stenington/tissue/issues/2",
+    expectClass: ['tissue', 'tissue-closed'],
+    expectTitle: "stenington/tissue#2: Closed",
+    expectWaitTitle: "Checking stenington/tissue#2..."
+  });
+
+   tissueTest({
+    url: "//github.com/stenington/tissue/issues/2",
+    expectClass: ['tissue', 'tissue-closed'],
+    expectTitle: "stenington/tissue#2: Closed",
+    expectWaitTitle: "Checking stenington/tissue#2..."
+  });
+
   tissueTest({
     url: "http://not-even-github.com/foo/bar/issues/1",
     expectSkip: true,
