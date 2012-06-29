@@ -3,6 +3,8 @@
 <link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" href="./pages.css">
 <link rel="stylesheet" href="../css/tissue.css">
+  <link rel="stylesheet" href="../js/test/vendor/qunit.css" type="text/css" media="screen" />
+  <script src="../js/test/vendor/qunit.js"></script>
 
 <h1>Tissue</h1>
 <hr>
@@ -30,7 +32,7 @@
 
 <div class="row">
   <section id="should" class="col">
-    <h3>Should</h3>
+    <h3>Should.</h3>
     <p>
       This is how Tissue should behave. When linking to a
       Github Issue, it should show up like so for
@@ -50,7 +52,7 @@
          class="should forceHang">wait</a>.
       And a reference to a 
       <a href="http://github.com/stenington/tissue/issues/99999999" 
-         title="stenington/tissue#9375: Not Found" 
+         title="stenington/tissue#99999999: Not Found" 
          class="should should-err">non-existent</a>
       issue should look like so.
     </p>
@@ -61,8 +63,21 @@
   </section>
 
   <section id="does" class="col">
-    <h3>Does</h3>
+    <hgroup>
+      <h3 class="test-status">Does?</h3>
+      <button class="qunitToggle">See the qunit</button>
+    </hgroup>
   </section>
+</div>
+
+<div class="row">
+  <div class="qunit">
+    <h1 id="qunit-header">QUnit tests</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+  </div>
 </div>
 
 <div class="row">
@@ -80,9 +95,28 @@
 <script>
 $(function(){
 
+  $('.qunit').hide();
+  $('.qunitToggle').click(function(){
+    $('.qunit').slideToggle();
+    return false;
+  });
+
+  QUnit.done = function(info){
+    if(info.failed !== 0){
+      $('.test-status').text('Does not.');
+    }
+    else if(info.passed > 0) {
+      $('.test-status').text('Does!');
+    }
+  };
+
+  var links = 0;
+  var done = 0;
   $('#should').children(':not(:first-child)').clone().appendTo('#does');
   $('#does a').each(function(){
-    var forceHang = $(this).hasClass('forceHang');
+    links++;
+    var link = this;
+    var forceHang = $(link).hasClass('forceHang');
     if (forceHang) {
       var ajax = $.ajax;
       $.ajax = function(spec){
@@ -90,12 +124,43 @@ $(function(){
         return d;
       };
     }
-    $(this).removeAttr('title').removeAttr('class');
-    $(this).trackIssue();
+    $(link).removeAttr('title').removeAttr('class');
+    $(link).trackIssue().always(function(){ done++ });
     if (forceHang) {
       $.ajax = ajax;
+      done++;
     }
   });
+
+  function compare() {
+    module("Should matches Does");
+    var shoulds = $('#should a');
+    var actuals = $('#does a');
+    test("Link counts match", function(){
+      equal(actuals.length, shoulds.length);
+    });
+    $(shoulds).each(function(i, el){
+      test('Link ' + i + ' looks ok', function(){
+        var checkClasses = $(actuals[i]).attr('class') || "";
+        checkClasses = checkClasses.split(" ");
+        checkClasses.forEach(function(checkClass, j, a){
+          var expectClass = checkClass.replace('tissue', 'should')
+          ok($(shoulds[i]).hasClass(expectClass), 'has class "' + checkClass + '"');
+        });
+        equal($(actuals[i]).attr('title'), $(shoulds[i]).attr('title'), "titles match");
+      });
+    });
+  }
+
+  function check() {
+    if (done != links) {
+      setTimeout(check, 500);
+    }
+    else {
+      compare();
+    }
+  }
+  check();
 
 });
 </script>

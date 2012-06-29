@@ -29,6 +29,10 @@ h2 em {
   font-weight: normal;
 }
   
+.test-status {
+  display: inline-block;
+  padding-right: 24px;
+}
 
 /* The tissue styles should approximate these */
 
