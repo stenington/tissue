@@ -20,7 +20,7 @@ $.fn.extend({
         $(el).addClass('tissue-err').attr('title', id + ': ' + err);
       }
       else {
-        console.log("Unhandled error:", err, id);
+        console.log("Unhandled error:", "[" + err + "]", id);
       }
     });
 
@@ -34,6 +34,7 @@ $.fn.extend({
       var ajax = $.ajax({
         url: 'https://api.github.com/repos/' + user + '/' + project + '/issues/' + issueNum,
         error: function(xhr, textStatus, err){
+          console.log("Ajax error callback:", arguments);
           deferred.reject(err, issueId);
         },
         success: function(data, textStatus, xhr){
