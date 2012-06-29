@@ -1,0 +1,28 @@
+.tissue {
+  color: white;
+  background-color: #a8a8a8;
+  border-radius: 3px;
+  padding: 0.2em;
+  white-space: nowrap;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tissue:link,
+.tissue:visited,
+.tissue:hover,
+.tissue:active {
+  text-decoration: none;
+}
+
+.tissue-open {
+  background: #6cc644;
+}
+
+.tissue-closed {
+  background-color: #bd2c00;
+}
+
+.tissue-err {
+  background-color: #fc8c13;
+}
