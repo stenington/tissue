@@ -96,8 +96,15 @@
 $(function(){
 
   $('.qunit').hide();
+  var toggleTexts = [
+    'See the qunit',
+    'Hide the qunit'
+  ];
+  var visibleText = 1;
   $('.qunitToggle').click(function(){
     $('.qunit').slideToggle();
+    $(this).text(toggleTexts[visibleText]);
+    visibleText = (visibleText + 1) % 2;
     return false;
   });
 
