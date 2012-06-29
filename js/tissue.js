@@ -1,3 +1,5 @@
+(function($){
+
 var ghIssueUrl = /(?:https?:)?\/\/(?:www\.)?github\.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)$/;
 
 $.fn.extend({
@@ -51,3 +53,5 @@ $(function(){
     $(this).trackIssue();
   });
 })
+
+})(jQuery);
