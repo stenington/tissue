@@ -38,6 +38,9 @@ $.fn.extend({
           deferred.reject(err, issueId);
         },
         success: function(data, textStatus, xhr){
+          if (typeof data === 'string') {
+            data = $.parseJSON(data);
+          }
           deferred.resolve(data.state, issueId);
         }
       });
