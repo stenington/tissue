@@ -16,12 +16,8 @@ $.fn.extend({
       }
     });
     deferred.fail(function(err, id){
-      if (err === 'Not Found'){
-        $(el).addClass('tissue-err').attr('title', id + ': ' + err);
-      }
-      else {
-        console.log("Unhandled error:", "[" + err + "]", id);
-      }
+      err = err || "Unknown Error";
+      $(el).addClass('tissue-err').attr('title', id + ': ' + err);
     });
 
     var parts = ghIssueUrl.exec($(el).attr('href'));
@@ -34,7 +30,6 @@ $.fn.extend({
       var ajax = $.ajax({
         url: 'https://api.github.com/repos/' + user + '/' + project + '/issues/' + issueNum,
         error: function(xhr, textStatus, err){
-          console.log("Ajax error callback:", arguments);
           deferred.reject(err, issueId);
         },
         success: function(data, textStatus, xhr){
