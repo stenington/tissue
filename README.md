@@ -14,4 +14,5 @@ Until [this gets closed](https://github.com/travis-ci/travis-ci/issues/476), Tra
 
     git checkout run-travis-run
     git checkout gh-pages -- .
-    git commit --allow-empty-message
+    git commit -m "Run, Travis, run!"
+    git push origin run-travis-run
