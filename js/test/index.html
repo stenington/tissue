@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- vendor -->
+  <script src="./vendor/jquery.js"></script>
+  <link rel="stylesheet" href="./vendor/qunit.css" type="text/css" media="screen" />
+  <script src="./vendor/qunit.js"></script>
+  <!-- lib -->
+  <script src="../tissue.js"></script>
+  <!-- tests -->
+  <script src="./util.js"></script>
+  <script src="./tissue-test.js"></script>
+  
+</head>
+<body>
+  <h1 id="qunit-header">QUnit example</h1>
+  <h2 id="qunit-banner"></h2>
+  <div id="qunit-testrunner-toolbar"></div>
+  <h2 id="qunit-userAgent"></h2>
+  <ol id="qunit-tests"></ol>
+  <div id="qunit-fixture">
+    <div id="autorun">
+      <!-- these test the js-less tissue-ifying -->
+      <a class="should" rel="issue" href="http://github.com/stenington/tissue/issues/1">Should get marked</a>
+      <a class="not" href="http://github.com/stenington/tissue/issues/1">Should get marked</a>
+    </div>
+  </div>
+
+</body>
+</html>

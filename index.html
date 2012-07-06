@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<title>Tissue</title>
+<link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="./css/pages.css">
+<link rel="stylesheet" href="./css/tissue.css">
+  <link rel="stylesheet" href="./js/test/vendor/qunit.css" type="text/css" media="screen" />
+  <script src="./js/test/vendor/qunit.js"></script>
+
+<h1>Tissue</h1>
+<hr>
+<h2>Track your issues <em>and try not to cry</em></h2>
+<p>
+  Tissue turns Github Issue links into status badges that
+  let you know at a glance if the bug is open or closed 
+  (or even broken).
+</p>
+<div class="row">
+  <section class="col">
+    <h3>Usage</h3>
+    <p>
+      <code>tissue.js</code> requires that <code>jQuery</code>
+      already be included on the page. Then there are two 
+      ways to use it:
+    </p>
+    <pre><code>&lt;a <b>rel="issue"</b> href="//github.com/stenington/tissue/issues/1"&gt;text&lt;/a&gt;</code></pre>
+    <p>or:</p>
+    <pre><code>$('a')<b>.trackIssue()</b>;</code></pre>
+
+    </code></pre>
+  </section>
+</div>
+
+<div class="row">
+  <section id="should" class="col">
+    <h3>Should.</h3>
+    <p>
+      This is how Tissue should behave. When linking to a
+      Github Issue, it should show up like so for
+      <a href="http://github.com/stenington/tissue/issues/1" 
+         title="stenington/tissue#1: Open" 
+         class="should should-open">open ones</a> 
+      and like this for
+      <a href="http://github.com/stenington/tissue/issues/2" 
+         title="stenington/tissue#2: Closed" 
+         class="should should-closed">closed</a>.
+    </p>
+    <p>
+      Before the status check completes, links should look
+      like this while they
+      <a href="http://github.com/stenington/tissue/issues/1" 
+         title="Checking stenington/tissue#1..." 
+         class="should forceHang">wait</a>.
+      And a reference to a 
+      <a href="http://github.com/stenington/tissue/issues/99999999" 
+         title="stenington/tissue#99999999: Not Found" 
+         class="should should-err">non-existent</a>
+      issue should look like so.
+    </p>
+    <p>
+      All links have <code>title</code> tooltips, and 
+      are clickable&mdash;even if broken. Also, 
+      <a href="http://www.github.com/stenington/tissue">links to other things</a> don't change.
+  </section>
+
+  <section id="does" class="col">
+    <hgroup>
+      <h3 class="test-status">Does?</h3>
+      <button class="qunitToggle">See the qunit</button>
+    </hgroup>
+  </section>
+</div>
+
+<div class="row">
+  <div class="qunit">
+    <h1 id="qunit-header">QUnit tests</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+  </div>
+</div>
+
+<div class="row">
+  <section class="col">
+    <h3>More</h3>
+    <p>
+      See <a href="./js/test/">moar tests</a>.
+    </p>
+    <p>
+      See the project 
+      <a href="http://www.github.com/stenington/tissue">on Github</a>.
+    </p>
+  </section>
+</div>
+
+<script src="./js/test/vendor/jquery.js"></script>
+<script src="./js/tissue.js"></script>
+<script>
+$(function(){
+
+  $('.qunit').hide();
+  var toggleTexts = [
+    'See the qunit',
+    'Hide the qunit'
+  ];
+  var visibleText = 1;
+  $('.qunitToggle').click(function(){
+    $('.qunit').slideToggle();
+    $(this).text(toggleTexts[visibleText]);
+    visibleText = (visibleText + 1) % 2;
+    return false;
+  });
+
+  QUnit.done = function(info){
+    if(info.failed !== 0){
+      $('.test-status').text('Does not.');
+    }
+    else if(info.passed > 0) {
+      $('.test-status').text('Does!');
+    }
+  };
+
+  var links = 0;
+  var done = 0;
+  $('#should').children(':not(:first-child)').clone().appendTo('#does');
+  $('#does a').each(function(){
+    links++;
+    var link = this;
+    var forceHang = $(link).hasClass('forceHang');
+    if (forceHang) {
+      var ajax = $.ajax;
+      $.ajax = function(spec){
+        var d = $.Deferred();
+        return d;
+      };
+    }
+    $(link).removeAttr('title').removeAttr('class');
+    $(link).trackIssue().always(function(){ done++ });
+    if (forceHang) {
+      $.ajax = ajax;
+      done++;
+    }
+  });
+
+  function compare() {
+    module("Should matches Does");
+    var shoulds = $('#should a');
+    var actuals = $('#does a');
+    test("Link counts match", function(){
+      equal(actuals.length, shoulds.length);
+    });
+    $(shoulds).each(function(i, el){
+      test('Link ' + i + ' looks ok', function(){
+        var checkClasses = $(actuals[i]).attr('class') || "";
+        checkClasses = checkClasses.split(" ");
+        checkClasses.forEach(function(checkClass, j, a){
+          var expectClass = checkClass.replace('tissue', 'should')
+          ok($(shoulds[i]).hasClass(expectClass), 'has class "' + checkClass + '"');
+        });
+        equal($(actuals[i]).attr('title'), $(shoulds[i]).attr('title'), "titles match");
+      });
+    });
+  }
+
+  function check() {
+    if (done != links) {
+      setTimeout(check, 500);
+    }
+    else {
+      compare();
+    }
+  }
+  check();
+
+});
+</script>

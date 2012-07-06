@@ -1,0 +1,66 @@
+/* Google web fonts referenced: 
+ * <link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+ */
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, sans-serif;
+  line-height: 1.2em;
+  color: #333;
+  padding: 4px 24px;
+}
+
+.row {
+  clear: both;
+}
+
+.col {
+  float: left;
+  padding-right: 24px;
+  width: 400px;
+}
+
+h1 {
+  font-family: "Pacifico", cursive;
+  text-shadow: -2px 2px 4px #999;
+}
+
+h2 em {
+  font-style: normal;
+  font-weight: normal;
+}
+  
+.test-status {
+  display: inline-block;
+  padding-right: 24px;
+}
+
+/* The tissue styles should approximate these */
+
+  .should {
+    color: white;
+    background-color: #a8a8a8;
+    border-radius: 3px;
+    padding: 0.2em;
+    white-space: nowrap;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .should:link,
+  .should:visited,
+  .should:hover,
+  .should:active {
+    text-decoration: none;
+  }
+
+  .should-open {
+    background: #6cc644;
+  }
+
+  .should-closed {
+    background-color: #bd2c00;
+  }
+
+  .should-err {
+    background-color: #fc8c13;
+  }
