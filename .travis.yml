@@ -3,7 +3,7 @@ node_js:
   - 0.6
 before_script:
   - npm install express
-  - env PORT=80 node /js/test/server/index.js &
+  - env PORT=80 node js/test/server/index.js &
   - sleep 5
 script: 
   - phantomjs js/test/server/run-qunit.js "http://localhost:80/index.html"
