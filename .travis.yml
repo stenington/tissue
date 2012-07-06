@@ -5,8 +5,7 @@ before_script:
   - "export DISPLAY=:99.0" 
   - "sh -e /etc/init.d/xvfb start"
   - npm install express
-  - env PORT=80 sudo node js/test/serve/index.js &
+  - env PORT=1337 sudo node js/test/serve/index.js &
   - sleep 5
-script: 
-  - phantomjs js/test/serve/run-qunit.js "http://localhost:80/index.html"
-  - phantomjs js/test/serve/run-qunit.js "http://localhost:80/js/test/index.html"
+script: phantomjs js/test/serve/run-qunit.js "http://localhost:1337/index.html" &&
+  phantomjs js/test/serve/run-qunit.js "http://localhost:1337/js/test/index.html"
