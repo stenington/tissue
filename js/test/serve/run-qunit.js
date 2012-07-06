@@ -57,7 +57,13 @@ page.open(system.args[1], function(status){
             return page.evaluate(function(){
                 var el = document.getElementById('qunit-testresult');
                 if (el && el.innerText.match('completed')) {
-                    return true;
+                    var total = parseInt(el.getElementsByClassName('total')[0].innerHTML, 10);
+                    if (total !== 0){ 
+                      return true;
+                    }
+                    else {
+                      return false;
+                    }
                 }
                 return false;
             });
@@ -71,6 +77,7 @@ page.open(system.args[1], function(status){
                 return 10000;
             });
             phantom.exit((parseInt(failedNum, 10) > 0) ? 1 : 0);
-        });
+        },
+        10000);
     }
 });
